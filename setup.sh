@@ -13,4 +13,4 @@ echo "Installing Tmux"
 brew install tmux
 
 echo "Installing the Tmux Package Manager (TPM)"
-git clone https://github.com/tmux-plugins/tpm ~/dotfiles/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
