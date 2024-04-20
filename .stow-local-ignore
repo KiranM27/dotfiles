@@ -25,3 +25,6 @@ _darcs
 # setup file 
 setup.sh
 things_to_install.txt
+
+# tmux package manager
+\.tmux
