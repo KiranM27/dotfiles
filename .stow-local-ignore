@@ -23,5 +23,8 @@ _darcs
 ^/COPYING
 
 # setup file 
-setup.sh
+scripts
 things_to_install.txt
+
+# log files 
+.*\.log$
