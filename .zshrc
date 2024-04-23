@@ -9,6 +9,10 @@ alias cls="clear"
 alias python="python3"
 alias pip="pip3"
 
+# zoxide setup
+eval "$(zoxide init zsh)"
+
+
 # Pyenv initialization
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
