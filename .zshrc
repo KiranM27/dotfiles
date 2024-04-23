@@ -10,7 +10,7 @@ alias python="python3"
 alias pip="pip3"
 
 # zoxide setup
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 
 # Pyenv initialization
