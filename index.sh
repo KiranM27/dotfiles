@@ -34,33 +34,8 @@ echo "🟢 Setting up Node.js..."
 ./scripts/nodejs_setup.sh
 echo
 
-# Show what stow will do before executing
-echo "🔍 Checking what stow will link..."
-cd ..
-echo "Stow will create these symlinks:"
-if ! stow --simulate --verbose dotfiles 2>&1; then
-    echo "❌ Stow simulation failed. Checking for conflicts..."
-    echo "Current home directory contents that might conflict:"
-    ls -la ~/ | grep -E '\.(zshrc|gitignore)' || echo "No conflicting dotfiles found"
-fi
-echo
-
-# Ask for confirmation
-read -p "Proceed with creating symlinks? (y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "❌ Setup cancelled"
-    cd dotfiles
-    exit 0
-fi
-
-# Create symlinks
-echo "🔗 Creating symlinks..."
-pwd
-sudo stow dotfiles
-cd dotfiles
+# Setup symlinks using stow management
+echo "🔗 Setting up configuration symlinks..."
+./scripts/stow_management.sh stow
 
 echo "✅ Dotfiles setup complete!"
-echo
-echo "Symlinks created:"
-ls -la ~/ | grep " -> dotfiles/" || echo "No symlinks found (check manually)"
