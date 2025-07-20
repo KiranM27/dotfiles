@@ -11,6 +11,9 @@ if [[ ! -f "things_to_install.txt" ]]; then
     exit 1
 fi
 
+# Check/Install Homebrew
+./scripts/homebrew_check.sh
+
 # Install dependencies
 echo "📦 Installing Homebrew packages..."
 ./scripts/brew_packages.sh
