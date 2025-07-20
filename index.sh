@@ -6,7 +6,7 @@ echo "🚀 Setting up dotfiles..."
 echo
 
 # Check if we're in the dotfiles directory
-if [[ ! -f "things_to_install.txt" ]]; then
+if [[ ! -f "index.sh" ]] || [[ ! -d "scripts" ]]; then
     echo "❌ Error: Please run this script from the dotfiles directory"
     exit 1
 fi
