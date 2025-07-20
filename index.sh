@@ -56,6 +56,7 @@ fi
 
 # Create symlinks
 echo "🔗 Creating symlinks..."
+pwd
 sudo stow dotfiles
 cd dotfiles
 

@@ -1,16 +1,29 @@
-echo "Installing Dependencies"
+#!/bin/bash
 
-echo "Installing Tree"
-brew install tree
+set -e
 
-echo "Installing Zoxide"
-brew install zoxide
+echo "🟢 Installing Dependencies..."
+echo
 
-echo "Installing Stow"
-brew install stow
+# Function to install package if not already installed
+install_if_missing() {
+    local package=$1
+    local display_name=${2:-$package}
+    
+    if brew list "$package" &>/dev/null; then
+        echo "✅ $display_name already installed"
+    else
+        echo "📦 Installing $display_name..."
+        brew install "$package"
+        echo "✅ $display_name installed"
+    fi
+    echo
+}
 
-echo "Installing Fuzzy Finder (FZF)"
-brew install fzf
+install_if_missing "tree" "Tree"
+install_if_missing "zoxide" "Zoxide"
+install_if_missing "stow" "Stow"
+install_if_missing "fzf" "Fuzzy Finder (FZF)"
+install_if_missing "autojump" "Autojump"
 
-echo "Installing Autojump"
-brew install autojump
+echo "🎉 Dependencies installation complete!"
