@@ -11,3 +11,6 @@ brew install stow
 
 echo "Installing Fuzzy Finder (FZF)"
 brew install fzf
+
+echo "Installing Autojump"
+brew install autojump
