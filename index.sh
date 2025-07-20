@@ -12,8 +12,8 @@ if [[ ! -f "things_to_install.txt" ]]; then
 fi
 
 # Install dependencies
-echo "📦 Installing dependencies..."
-./scripts/requirements.sh
+echo "📦 Installing Homebrew packages..."
+./scripts/brew_packages.sh
 echo
 
 # Setup Zsh environment
