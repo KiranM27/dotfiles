@@ -16,6 +16,16 @@ echo "📦 Installing dependencies..."
 ./scripts/requirements.sh
 echo
 
+# Setup Zsh environment
+echo "🐚 Setting up Zsh..."
+./scripts/zsh_setup.sh
+echo
+
+# Setup Node.js environment
+echo "🟢 Setting up Node.js..."
+./scripts/nodejs_setup.sh
+echo
+
 # Show what stow will do before executing
 echo "🔍 Checking what stow will link..."
 cd ..
