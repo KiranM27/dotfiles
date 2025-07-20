@@ -26,6 +26,7 @@ _darcs
 scripts
 things_to_install.txt
 index.sh
+CLAUDE.md
 
 # log files 
 .*\.log$

@@ -3,3 +3,6 @@
 
 # the log files 
 *.log
+
+# Claude Code documentation
+CLAUDE.md
