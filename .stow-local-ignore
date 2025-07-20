@@ -22,9 +22,10 @@ _darcs
 ^/LICENSE.*
 ^/COPYING
 
-# setup file 
+# setup files 
 scripts
 things_to_install.txt
+index.sh
 
 # log files 
 .*\.log$
