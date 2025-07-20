@@ -11,6 +11,11 @@ if [[ ! -f "things_to_install.txt" ]]; then
     exit 1
 fi
 
+# Make all scripts executable
+echo "🔧 Making scripts executable..."
+chmod +x scripts/*.sh
+echo
+
 # Check/Install Homebrew
 ./scripts/homebrew_check.sh
 
