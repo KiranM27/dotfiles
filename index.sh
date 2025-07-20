@@ -38,7 +38,11 @@ echo
 echo "🔍 Checking what stow will link..."
 cd ..
 echo "Stow will create these symlinks:"
-stow --simulate --verbose dotfiles 2>/dev/null || echo "No conflicts detected"
+if ! stow --simulate --verbose dotfiles 2>&1; then
+    echo "❌ Stow simulation failed. Checking for conflicts..."
+    echo "Current home directory contents that might conflict:"
+    ls -la ~/ | grep -E '\.(zshrc|gitignore)' || echo "No conflicting dotfiles found"
+fi
 echo
 
 # Ask for confirmation
