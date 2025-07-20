@@ -1,5 +1,0 @@
-tree
-zoxide
-brew
-stow
-git
