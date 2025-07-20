@@ -6,7 +6,7 @@ Personal dotfiles managed with GNU Stow for macOS development environment setup.
 
 1. Clone this repository:
    ```bash
-   git clone <your-repo-url> dotfiles
+   git clone https://github.com/KiranM27/dotfiles/tree/main dotfiles
    cd dotfiles
    ```
 
