@@ -17,6 +17,7 @@ eval "$(starship init zsh)"
 
 # General aliases
 alias cls="clear"
+alias cc="claude"
 alias python="python3"
 alias pip="pip3"
 
@@ -76,3 +77,4 @@ source /Users/kiran/.docker/init-zsh.sh || true
 
 # Local environment
 . "$HOME/.local/bin/env"
+export PATH="$HOME/.local/bin:$PATH"
