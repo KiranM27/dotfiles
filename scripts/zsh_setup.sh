@@ -9,13 +9,13 @@ echo
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "📦 Installing Oh My Zsh..."
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    
+
     # Remove the default .zshrc created by Oh My Zsh so our custom one can be symlinked
     if [ -f "$HOME/.zshrc" ]; then
         echo "🗑️  Removing default .zshrc created by Oh My Zsh..."
         rm "$HOME/.zshrc"
     fi
-    
+
     echo "✅ Oh My Zsh installed"
 else
     echo "✅ Oh My Zsh already installed"
@@ -25,7 +25,7 @@ echo
 # Install Starship
 if ! command -v starship &> /dev/null; then
     echo "⭐ Installing Starship..."
-    curl -sS https://starship.rs/install.sh | sh -s -- --yes
+    brew install starship
     echo "✅ Starship installed"
 else
     echo "✅ Starship already installed"
