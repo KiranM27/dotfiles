@@ -20,12 +20,26 @@ run = 'move-node-to-workspace C'
 if.app-id = 'company.thebrowser.Browser'
 run = 'move-node-to-workspace A'
 
+# Auto-route WhatsApp + Telegram to workspace 1 (comms zone)
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
+run = 'move-node-to-workspace 1'
+
 # Keep workspace C Ghostty-only: evict any non-Ghostty window that lands on C.
-# Ghostty matches the rule above first and stops (check-further-callbacks defaults to false),
-# so this fallback only fires for other apps.
+# Earlier rules match first and stop (check-further-callbacks defaults to false),
+# so this fallback only fires for other apps. Evict to 2 (not 1) to keep 1 clean too.
 [[on-window-detected]]
 if.workspace = 'C'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace 2'
+
+# Keep workspace 1 WhatsApp/Telegram-only: evict anything else that lands on 1.
+[[on-window-detected]]
+if.workspace = '1'
+run = 'move-node-to-workspace 2'
 
 [gaps]
 inner.horizontal = 6
