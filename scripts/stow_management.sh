@@ -11,6 +11,7 @@ TARGET_DIR="$HOME"
 # List of packages to stow (directories containing config files)
 PACKAGES=(
     "zsh"
+    "aerospace"
 )
 
 echo "🔗 Stow Management"

@@ -1,0 +1,90 @@
+# AeroSpace config -- tiling WM for macOS
+# Docs: https://nikitabobko.github.io/AeroSpace/guide
+
+start-at-login = true
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 30
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Auto-route Ghostty windows to workspace C (Claude zone)
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = 'move-node-to-workspace C'
+
+# Auto-route Arc windows to workspace A (browser)
+[[on-window-detected]]
+if.app-id = 'company.thebrowser.Browser'
+run = 'move-node-to-workspace A'
+
+# Keep workspace C Ghostty-only: evict any non-Ghostty window that lands on C.
+# Ghostty matches the rule above first and stops (check-further-callbacks defaults to false),
+# so this fallback only fires for other apps.
+[[on-window-detected]]
+if.workspace = 'C'
+run = 'move-node-to-workspace 1'
+
+[gaps]
+inner.horizontal = 6
+inner.vertical   = 6
+outer.left       = 6
+outer.bottom     = 6
+outer.top        = 6
+outer.right      = 6
+
+[mode.main.binding]
+# --- Focus adjacent window ---
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# --- Move focused window within workspace ---
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+# --- Resize ---
+alt-minus = 'resize smart -50'
+alt-equal = 'resize smart +50'
+
+# --- Jump to workspace ---
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-c = 'workspace C'   # Claude
+alt-b = 'workspace B'
+alt-e = 'workspace E'   # Editor
+alt-s = 'workspace S'   # Slack / comms
+
+# --- Send focused window to workspace ---
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-c = 'move-node-to-workspace C'
+alt-shift-b = 'move-node-to-workspace B'
+alt-shift-e = 'move-node-to-workspace E'
+alt-shift-s = 'move-node-to-workspace S'
+
+# --- Last workspace ---
+alt-tab = 'workspace-back-and-forth'
+
+# --- Layouts ---
+alt-slash = 'layout tiles horizontal vertical'   # grid
+alt-comma = 'layout accordion horizontal vertical'  # fan-out
+
+# --- Fullscreen / float / reload ---
+alt-f                = 'fullscreen'
+alt-shift-space      = 'layout floating tiling'
+alt-shift-semicolon  = 'reload-config'
+
+# --- Launch new Ghostty into current workspace ---
+alt-enter = 'exec-and-forget open -na Ghostty'
