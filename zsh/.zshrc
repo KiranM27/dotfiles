@@ -17,9 +17,20 @@ eval "$(starship init zsh)"
 
 # General aliases
 alias cls="clear"
-alias cc="claude"
+alias cc="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 claude"
+alias ccbp="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 claude --permission-mode bypassPermissions"
 alias python="python3"
 alias pip="pip3"
+alias ks='~/.claude/hooks/kill-speak.sh'
+
+# Corpus (personal knowledge base / Obsidian vault)
+alias corpus='cd ~/corpus && claude'
+corpus-drop() {
+  local f=~/corpus/raw/quickdrop-$(date +%Y-%m-%d-%H%M%S).md
+  pbpaste > "$f"
+  echo "Saved clipboard to $f"
+  (cd ~/corpus && claude "ingest $f")
+}
 
 # Git aliases
 alias gs='git status'
@@ -78,3 +89,11 @@ source /Users/kiran/.docker/init-zsh.sh || true
 # Local environment
 . "$HOME/.local/bin/env"
 export PATH="$HOME/.local/bin:$PATH"
+
+# Claude Code -- disable TUI flicker inside tmux
+# (official workaround for anthropics/claude-code#37283)
+export CLAUDE_CODE_NO_FLICKER=1
+
+# Claude Squad aliases
+alias cs='claude-squad'
+alias csbp='claude-squad -p "claude --dangerously-skip-permissions"'
