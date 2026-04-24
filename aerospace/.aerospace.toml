@@ -10,17 +10,86 @@ accordion-padding = 30
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
-# Auto-route Ghostty windows to workspace C (Claude zone)
+# =============================================================================
+# Window routing rules.
+#
+# Rule order:
+#   1. Floating rules (check-further-callbacks = true) so utility apps float
+#      on whatever workspace they open, then still get evicted if zoned.
+#   2. App routing rules (first match wins, stop).
+#   3. Workspace eviction rules (fallback): anything not caught above that
+#      lands on a zoned workspace gets bounced to workspace 2 (junk drawer).
+#
+# Eviction caveat: on-window-detected only fires on window *creation*, not on
+# manual moves via alt-shift-X. You can still force a window onto a zoned
+# workspace manually; it won't get bounced back.
+# =============================================================================
+
+# --- Floating: utility windows that shouldn't tile -------------------------
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Preview'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.pdfeditor.pdfeditormac'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'so.cap.desktop'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.docker.docker'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+check-further-callbacks = true
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-EventViewer'
+check-further-callbacks = true
+run = 'layout floating'
+
+# --- C: Ghostty (terminal / Claude zone) -----------------------------------
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
 run = 'move-node-to-workspace C'
 
-# Auto-route Arc windows to workspace A (browser)
+# --- A: browsers -----------------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'company.thebrowser.Browser'
 run = 'move-node-to-workspace A'
 
-# Auto-route WhatsApp + Telegram to workspace 1 (comms zone)
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace A'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace A'
+
+# --- 1: personal comms -----------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
 run = 'move-node-to-workspace 1'
@@ -29,16 +98,132 @@ run = 'move-node-to-workspace 1'
 if.app-id = 'ru.keepcoder.Telegram'
 run = 'move-node-to-workspace 1'
 
-# Keep workspace C Ghostty-only: evict any non-Ghostty window that lands on C.
-# Earlier rules match first and stop (check-further-callbacks defaults to false),
-# so this fallback only fires for other apps. Evict to 2 (not 1) to keep 1 clean too.
+# --- S: work comms ---------------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace S'
+
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace S'
+
+# --- E: code editors + code-adjacent ---------------------------------------
+[[on-window-detected]]
+if.app-id = 'dev.zed.Zed'
+run = 'move-node-to-workspace E'
+
+[[on-window-detected]]
+if.app-id = 'com.openai.codex'
+run = 'move-node-to-workspace E'
+
+[[on-window-detected]]
+if.app-id = 'org.jkiss.dbeaver.core.product'
+run = 'move-node-to-workspace E'
+
+[[on-window-detected]]
+if.app-id = 'com.github.GitHubClient'
+run = 'move-node-to-workspace E'
+
+# --- B: productivity / notes -----------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.cron.electron'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'com.superhuman.electron'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Notes'
+run = 'move-node-to-workspace B'
+
+# --- W: office / docs (Microsoft + Apple iWork + LibreOffice) --------------
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Word'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Excel'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Powerpoint'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Keynote'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Pages'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iWork.Numbers'
+run = 'move-node-to-workspace W'
+
+[[on-window-detected]]
+if.app-id = 'org.libreoffice.script'
+run = 'move-node-to-workspace W'
+
+# --- 3: AI desktop apps ----------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.openai.chat'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.anthropic.claudefordesktop'
+run = 'move-node-to-workspace 3'
+
+# --- H: hidden (no keybinding; reach via `aerospace workspace H` if ever) --
+[[on-window-detected]]
+if.app-id = 'com.granola.app'
+run = 'move-node-to-workspace H'
+
+[[on-window-detected]]
+if.app-id = 'com.electron.wispr-flow'
+run = 'move-node-to-workspace H'
+
+# --- Eviction rules: keep zoned workspaces strict --------------------------
+# Anything not caught above that lands on a zoned workspace → workspace 2.
 [[on-window-detected]]
 if.workspace = 'C'
 run = 'move-node-to-workspace 2'
 
-# Keep workspace 1 WhatsApp/Telegram-only: evict anything else that lands on 1.
 [[on-window-detected]]
 if.workspace = '1'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'A'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'S'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'E'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'B'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'W'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = '3'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.workspace = 'H'
 run = 'move-node-to-workspace 2'
 
 [gaps]
@@ -74,9 +259,11 @@ alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 alt-a = 'workspace A'   # Arc / browser
 alt-c = 'workspace C'   # Claude
-alt-b = 'workspace B'
+alt-b = 'workspace B'   # Productivity / notes
 alt-e = 'workspace E'   # Editor
-alt-s = 'workspace S'   # Slack / comms
+alt-s = 'workspace S'   # Slack / Teams
+alt-w = 'workspace W'   # Word / office docs
+# H (hidden) deliberately has no binding -- reach via `aerospace workspace H` if needed
 
 # --- Send focused window to workspace ---
 alt-shift-1 = 'move-node-to-workspace 1'
@@ -89,6 +276,7 @@ alt-shift-c = 'move-node-to-workspace C'
 alt-shift-b = 'move-node-to-workspace B'
 alt-shift-e = 'move-node-to-workspace E'
 alt-shift-s = 'move-node-to-workspace S'
+alt-shift-w = 'move-node-to-workspace W'
 
 # --- Last workspace ---
 alt-tab = 'workspace-back-and-forth'
