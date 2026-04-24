@@ -44,6 +44,7 @@ Personal dotfiles managed with GNU Stow for macOS development environment setup.
 
 - `.zshrc` - Zsh shell configuration with aliases and environment setup
 - `.aerospace.toml` - AeroSpace tiling WM config (keybindings, workspace routing, gaps)
+- `.tmux.conf` - tmux config (Ctrl+a prefix, splits, mouse, Claude Code compatibility)
 - `.gitignore` - Git ignore patterns
 - `.stow-local-ignore` - Files excluded from Stow symlinking
 

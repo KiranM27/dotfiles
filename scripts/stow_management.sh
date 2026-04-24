@@ -12,6 +12,7 @@ TARGET_DIR="$HOME"
 PACKAGES=(
     "zsh"
     "aerospace"
+    "tmux"
 )
 
 echo "🔗 Stow Management"
