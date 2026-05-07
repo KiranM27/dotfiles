@@ -3,6 +3,13 @@
 
 start-at-login = true
 
+# Make the Wispr Flow "Status" pill follow the focused workspace so I always
+# see whether voice is being recorded. Hub window keeps its eviction to H.
+exec-on-workspace-change = ['/bin/bash', '-c', '''
+STATUS_ID=$(aerospace list-windows --all --format "%{window-id}%{app-bundle-id}%{window-title}" --json | jq -r '.[] | select(.["app-bundle-id"]=="com.electron.wispr-flow" and .["window-title"]=="Status") | .["window-id"]')
+[ -n "$STATUS_ID" ] && aerospace move-node-to-workspace --window-id "$STATUS_ID" "$AEROSPACE_FOCUSED_WORKSPACE" || true
+''']
+
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
@@ -183,6 +190,13 @@ run = 'move-node-to-workspace 3'
 [[on-window-detected]]
 if.app-id = 'com.granola.app'
 run = 'move-node-to-workspace H'
+
+# Wispr Flow status pill: float, do NOT evict to H. Workspace-change
+# callback (top of file) keeps it on the focused workspace.
+[[on-window-detected]]
+if.app-id = 'com.electron.wispr-flow'
+if.window-title-regex-substring = '^Status$'
+run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.electron.wispr-flow'
