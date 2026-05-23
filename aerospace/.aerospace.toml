@@ -251,10 +251,10 @@ outer.right      = 6
 
 [mode.main.binding]
 # --- Focus adjacent window ---
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+alt-h = 'focus --ignore-floating left'
+alt-j = 'focus --ignore-floating down'
+alt-k = 'focus --ignore-floating up'
+alt-l = 'focus --ignore-floating right'
 
 # --- Move focused window within workspace ---
 alt-shift-h = 'move left'
