@@ -4,7 +4,7 @@
 start-at-login = true
 
 # Make the Wispr Flow "Status" pill follow the focused workspace so I always
-# see whether voice is being recorded. Hub window keeps its eviction to H.
+# see whether voice is being recorded. Hub window keeps its eviction to 9.
 exec-on-workspace-change = ['/bin/bash', '-c', '''
 STATUS_ID=$(aerospace list-windows --all --format "%{window-id}%{app-bundle-id}%{window-title}" --json | jq -r '.[] | select(.["app-bundle-id"]=="com.electron.wispr-flow" and .["window-title"]=="Status") | .["window-id"]')
 [ -n "$STATUS_ID" ] && aerospace move-node-to-workspace --window-id "$STATUS_ID" "$AEROSPACE_FOCUSED_WORKSPACE" || true
@@ -186,12 +186,13 @@ run = 'move-node-to-workspace 3'
 if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace 3'
 
-# --- H: hidden (no keybinding; reach via `aerospace workspace H` if ever) --
+# --- 9: hidden (no keybinding; reach via `aerospace workspace 9` if ever) --
+# Workspace H is deliberately unused so alt-h stays free for `focus left`.
 [[on-window-detected]]
 if.app-id = 'com.granola.app'
-run = 'move-node-to-workspace H'
+run = 'move-node-to-workspace 9'
 
-# Wispr Flow status pill: float, do NOT evict to H. Workspace-change
+# Wispr Flow status pill: float, do NOT evict to 9. Workspace-change
 # callback (top of file) keeps it on the focused workspace.
 [[on-window-detected]]
 if.app-id = 'com.electron.wispr-flow'
@@ -200,7 +201,7 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.electron.wispr-flow'
-run = 'move-node-to-workspace H'
+run = 'move-node-to-workspace 9'
 
 # --- Eviction rules: keep zoned workspaces strict --------------------------
 # Anything not caught above that lands on a zoned workspace → workspace 2.
@@ -237,7 +238,7 @@ if.workspace = '3'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
-if.workspace = 'H'
+if.workspace = '9'
 run = 'move-node-to-workspace 2'
 
 [gaps]
@@ -261,6 +262,10 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
+# --- Move focused window to another monitor ---
+alt-shift-left  = 'move-node-to-monitor --wrap-around prev'
+alt-shift-right = 'move-node-to-monitor --wrap-around next'
+
 # --- Resize ---
 alt-minus = 'resize smart -50'
 alt-equal = 'resize smart +50'
@@ -277,7 +282,8 @@ alt-b = 'workspace B'   # Productivity / notes
 alt-e = 'workspace E'   # Editor
 alt-s = 'workspace S'   # Slack / Teams
 alt-w = 'workspace W'   # Word / office docs
-# H (hidden) deliberately has no binding -- reach via `aerospace workspace H` if needed
+# 9 (hidden) deliberately has no binding -- reach via `aerospace workspace 9` if needed
+# H is deliberately never used as a workspace so alt-h stays free for `focus left`
 
 # --- Send focused window to workspace ---
 alt-shift-1 = 'move-node-to-workspace 1'
