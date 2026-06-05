@@ -6,8 +6,14 @@ start-at-login = true
 # Make the Wispr Flow "Status" pill follow the focused workspace so I always
 # see whether voice is being recorded. Hub window keeps its eviction to 9.
 exec-on-workspace-change = ['/bin/bash', '-c', '''
+sleep 0.1
+FOCUSED_WORKSPACE=$(aerospace list-workspaces --focused)
+[ -n "$FOCUSED_WORKSPACE" ] || FOCUSED_WORKSPACE="$AEROSPACE_FOCUSED_WORKSPACE"
 STATUS_ID=$(aerospace list-windows --all --format "%{window-id}%{app-bundle-id}%{window-title}" --json | jq -r '.[] | select(.["app-bundle-id"]=="com.electron.wispr-flow" and .["window-title"]=="Status") | .["window-id"]')
-[ -n "$STATUS_ID" ] && aerospace move-node-to-workspace --window-id "$STATUS_ID" "$AEROSPACE_FOCUSED_WORKSPACE" || true
+if [ -n "$STATUS_ID" ] && [ -n "$FOCUSED_WORKSPACE" ]; then
+  aerospace move-node-to-workspace --window-id "$STATUS_ID" "$FOCUSED_WORKSPACE"
+  aerospace layout --window-id "$STATUS_ID" floating
+fi
 ''']
 
 enable-normalization-flatten-containers = true
@@ -114,13 +120,14 @@ run = 'move-node-to-workspace S'
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace S'
 
+# --- D: Codex ---------------------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.openai.codex'
+run = 'move-node-to-workspace D'
+
 # --- E: code editors + code-adjacent ---------------------------------------
 [[on-window-detected]]
 if.app-id = 'dev.zed.Zed'
-run = 'move-node-to-workspace E'
-
-[[on-window-detected]]
-if.app-id = 'com.openai.codex'
 run = 'move-node-to-workspace E'
 
 [[on-window-detected]]
@@ -222,6 +229,10 @@ if.workspace = 'S'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
+if.workspace = 'D'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
 if.workspace = 'E'
 run = 'move-node-to-workspace 2'
 
@@ -278,6 +289,7 @@ alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 alt-a = 'workspace A'   # Arc / browser
 alt-c = 'workspace C'   # Claude
+alt-d = 'workspace D'   # Codex
 alt-b = 'workspace B'   # Productivity / notes
 alt-e = 'workspace E'   # Editor
 alt-s = 'workspace S'   # Slack / Teams
@@ -293,6 +305,7 @@ alt-shift-4 = 'move-node-to-workspace 4'
 alt-shift-5 = 'move-node-to-workspace 5'
 alt-shift-a = 'move-node-to-workspace A'
 alt-shift-c = 'move-node-to-workspace C'
+alt-shift-d = 'move-node-to-workspace D'
 alt-shift-b = 'move-node-to-workspace B'
 alt-shift-e = 'move-node-to-workspace E'
 alt-shift-s = 'move-node-to-workspace S'
