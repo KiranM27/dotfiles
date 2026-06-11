@@ -144,16 +144,23 @@ if.app-id = 'com.cron.electron'
 run = 'move-node-to-workspace B'
 
 [[on-window-detected]]
-if.app-id = 'com.superhuman.electron'
-run = 'move-node-to-workspace B'
-
-[[on-window-detected]]
 if.app-id = 'md.obsidian'
 run = 'move-node-to-workspace B'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Notes'
 run = 'move-node-to-workspace B'
+
+# --- M: mail (Apple Mail + Superhuman) -------------------------------------
+# No app-window-title filter: every window Mail/Superhuman spawn (compose,
+# viewer, etc.) gets routed to M, since on-window-detected fires per window.
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-id = 'com.superhuman.electron'
+run = 'move-node-to-workspace M'
 
 # --- W: office / docs (Microsoft + Apple iWork + LibreOffice) --------------
 [[on-window-detected]]
@@ -245,6 +252,10 @@ if.workspace = 'W'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
+if.workspace = 'M'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
 if.workspace = '3'
 run = 'move-node-to-workspace 2'
 
@@ -292,6 +303,7 @@ alt-c = 'workspace C'   # Claude
 alt-d = 'workspace D'   # Codex
 alt-b = 'workspace B'   # Productivity / notes
 alt-e = 'workspace E'   # Editor
+alt-m = 'workspace M'   # Mail (Apple Mail + Superhuman)
 alt-s = 'workspace S'   # Slack / Teams
 alt-w = 'workspace W'   # Word / office docs
 # 9 (hidden) deliberately has no binding -- reach via `aerospace workspace 9` if needed
@@ -308,6 +320,7 @@ alt-shift-c = 'move-node-to-workspace C'
 alt-shift-d = 'move-node-to-workspace D'
 alt-shift-b = 'move-node-to-workspace B'
 alt-shift-e = 'move-node-to-workspace E'
+alt-shift-m = 'move-node-to-workspace M'
 alt-shift-s = 'move-node-to-workspace S'
 alt-shift-w = 'move-node-to-workspace W'
 
