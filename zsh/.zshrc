@@ -17,7 +17,7 @@ eval "$(starship init zsh)"
 
 # General aliases
 alias cls="clear"
-alias cc="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 claude"
+alias cc="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 cct"
 alias ccbp="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 claude --permission-mode bypassPermissions"
 alias python="python3"
 alias pip="pip3"
@@ -97,3 +97,5 @@ export CLAUDE_CODE_NO_FLICKER=1
 # Claude Squad aliases
 alias cs='claude-squad'
 alias csbp='claude-squad -p "claude --dangerously-skip-permissions"'
+
+source /Users/kiran/.claude/tools/ctx-monitor/cct.sh
