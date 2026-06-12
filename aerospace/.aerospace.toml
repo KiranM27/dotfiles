@@ -84,6 +84,15 @@ if.app-id = 'org.pqrs.Karabiner-EventViewer'
 check-further-callbacks = true
 run = 'layout floating'
 
+# --- D: agents cockpit (the one Ghostty window titled "Agent Cockpit") ------
+# MUST precede the generic Ghostty→C rule below (first match wins) so the
+# cockpit lands on its own workspace D instead of the shared Claude zone C.
+# The launcher sets this window title via OSC-2 + does a one-shot move to D.
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+if.window-title-regex-substring = 'Agent Cockpit'
+run = 'move-node-to-workspace D'
+
 # --- C: Ghostty (terminal / Claude zone) -----------------------------------
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
@@ -120,10 +129,10 @@ run = 'move-node-to-workspace S'
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace S'
 
-# --- D: Codex ---------------------------------------------------------------
+# --- E: Codex (AI coding — joins the code-editor zone below) ----------------
 [[on-window-detected]]
 if.app-id = 'com.openai.codex'
-run = 'move-node-to-workspace D'
+run = 'move-node-to-workspace E'
 
 # --- E: code editors + code-adjacent ---------------------------------------
 [[on-window-detected]]
@@ -300,9 +309,9 @@ alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 alt-a = 'workspace A'   # Arc / browser
 alt-c = 'workspace C'   # Claude
-alt-d = 'workspace D'   # Codex
+alt-d = 'workspace D'   # Agent Cockpit
 alt-b = 'workspace B'   # Productivity / notes
-alt-e = 'workspace E'   # Editor
+alt-e = 'workspace E'   # Code editors + Codex
 alt-m = 'workspace M'   # Mail (Apple Mail + Superhuman)
 alt-s = 'workspace S'   # Slack / Teams
 alt-w = 'workspace W'   # Word / office docs
