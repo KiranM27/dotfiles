@@ -13,6 +13,7 @@ PACKAGES=(
     "zsh"
     "aerospace"
     "tmux"
+    "bin"
 )
 
 echo "🔗 Stow Management"

@@ -1,0 +1,30 @@
+#!/bin/bash
+# ghostty-window — open a new Ghostty window in the ALREADY-RUNNING instance
+# (one process; no `open -na` per-agent proliferation), running CMD with cwd DIR.
+#
+# Uses Ghostty's native AppleScript `new window`, so it is focus-independent:
+# the Apple event is delivered straight to Ghostty regardless of which app is
+# frontmost (unlike System Events keystroke injection). DIR/CMD are passed as
+# argv (never interpolated into the AppleScript source) so there is no injection.
+#
+# Usage:  ghostty-window <working-dir> <command-string>
+#   <command-string> is parsed by Ghostty like a shell command line; quote it.
+# Example:
+#   ghostty-window ~/code "/bin/zsh -lc 'exec tmux attach -t mysess'"
+#
+# Prints the new window's stable Ghostty id on success.
+set -euo pipefail
+
+if [ "$#" -ne 2 ]; then
+  echo "usage: ghostty-window <working-dir> <command-string>" >&2
+  exit 2
+fi
+
+osascript -e 'on run argv
+  set theDir to item 1 of argv
+  set theCmd to item 2 of argv
+  tell application "Ghostty"
+    set w to new window with configuration {command:theCmd, initial working directory:theDir}
+    return id of w
+  end tell
+end run' "$1" "$2"
