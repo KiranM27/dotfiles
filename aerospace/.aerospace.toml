@@ -24,6 +24,21 @@ default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
 # =============================================================================
+# Monitor pinning: which workspaces live on which physical display.
+# Matched by monitor NAME (regex), so undocking degrades gracefully — pinned
+# workspaces fall back to the built-in automatically when the Dell is absent.
+#   C = Ghostty / terminal / Claude zone  -> Dell AIO
+#   D = Agent Cockpit                      -> Dell AIO
+#   N = Notion                             -> Dell AIO
+# Everything else (comms, AI apps, browser, mail, code, office…) stays on the
+# built-in, which is the default for any workspace not listed here.
+# =============================================================================
+[workspace-to-monitor-force-assignment]
+C = 'Dell AIO'
+D = 'Dell AIO'
+N = 'Dell AIO'
+
+# =============================================================================
 # Window routing rules.
 #
 # Rule order:
@@ -163,6 +178,11 @@ run = 'move-node-to-workspace B'
 [[on-window-detected]]
 if.app-id = 'com.apple.Notes'
 run = 'move-node-to-workspace B'
+
+# --- N: Notion (its own zone; Notion Calendar is com.cron.electron -> B) -----
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = 'move-node-to-workspace N'
 
 # --- M: mail (Apple Mail + Superhuman) -------------------------------------
 # No app-window-title filter: every window Mail/Superhuman spawn (compose,
@@ -319,6 +339,7 @@ alt-e = 'workspace E'   # Code editors + Codex
 alt-m = 'workspace M'   # Mail (Apple Mail + Superhuman)
 alt-s = 'workspace S'   # Slack / Teams
 alt-w = 'workspace W'   # Word / office docs
+alt-n = 'workspace N'   # Notion
 # 9 (hidden) deliberately has no binding -- reach via `aerospace workspace 9` if needed
 # H is deliberately never used as a workspace so alt-h stays free for `focus left`
 
@@ -336,6 +357,7 @@ alt-shift-e = 'move-node-to-workspace E'
 alt-shift-m = 'move-node-to-workspace M'
 alt-shift-s = 'move-node-to-workspace S'
 alt-shift-w = 'move-node-to-workspace W'
+alt-shift-n = 'move-node-to-workspace N'
 
 # --- Last workspace ---
 alt-tab = 'workspace-back-and-forth'
