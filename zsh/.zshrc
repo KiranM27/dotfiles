@@ -17,7 +17,9 @@ eval "$(starship init zsh)"
 
 # General aliases
 alias cls="clear"
-alias cc="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 cct"
+# Starts in auto (permissions.defaultMode in ~/.claude/settings.json); the flag
+# only ADDS bypassPermissions to the Shift+Tab cycle, it does NOT activate it.
+alias cc="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 cct --allow-dangerously-skip-permissions"
 alias ccbp="CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1 claude --permission-mode bypassPermissions"
 alias python="python3"
 alias pip="pip3"
