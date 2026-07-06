@@ -371,6 +371,10 @@ alt-slash = 'layout tiles horizontal vertical'   # grid
 alt-comma = 'layout accordion horizontal vertical'  # fan-out
 
 # --- Fullscreen / float / reload ---
+# ALWAYS use alt-f, NEVER the green button / cmd-ctrl-F (native fullscreen).
+# Native fullscreen creates a separate macOS Space that AeroSpace can't manage;
+# with "Displays have separate Spaces" off (our setup), focusing that app
+# blacks out every other monitor, and leaving it makes the app vanish.
 alt-f                = 'fullscreen'
 alt-shift-space      = 'layout floating tiling'
 alt-shift-semicolon  = 'reload-config'
