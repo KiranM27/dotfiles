@@ -321,6 +321,10 @@ alt-shift-l = 'move right'
 alt-shift-left  = 'move-node-to-monitor --wrap-around prev'
 alt-shift-right = 'move-node-to-monitor --wrap-around next'
 
+# --- Throw the whole current workspace onto the other monitor ---
+# With 2 monitors, wrap-around next = toggle between them.
+alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+
 # --- Resize ---
 alt-minus = 'resize smart -50'
 alt-equal = 'resize smart +50'
