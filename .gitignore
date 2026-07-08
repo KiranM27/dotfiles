@@ -4,6 +4,8 @@
 # the log files 
 *.log
 
-# Claude Code documentation
+# Claude Code documentation. Anchor `.claude` to the repo root so it only
+# ignores a stray root-level Claude *project* dir — NOT the `claude` stow
+# package's `claude/.claude/` mapping dir, which must be version-controlled.
 CLAUDE.md
-.claude
+/.claude

@@ -14,6 +14,8 @@ PACKAGES=(
     "aerospace"
     "tmux"
     "bin"
+    "claude"
+    "launchagents"
 )
 
 echo "🔗 Stow Management"

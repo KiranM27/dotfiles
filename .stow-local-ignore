@@ -22,12 +22,15 @@ _darcs
 ^/LICENSE.*
 ^/COPYING
 
-# setup files 
+# setup files
 scripts
 things_to_install.txt
 index.sh
 CLAUDE.md
-.claude
+# NOTE: no bare `.claude` entry here. It is unanchored, so it would match the
+# `claude` package's own `.claude/` mapping dir and stop it linking into
+# ~/.claude. A stray root-level Claude *project* dir isn't a package, so stow
+# never processes it anyway.
 
 # log files 
 .*\.log$

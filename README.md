@@ -47,9 +47,13 @@ Runs the scripts in `scripts/` in order:
 | `aerospace` | `~/.aerospace.toml`             | AeroSpace tiling-WM config (keybindings, workspaces)    |
 | `tmux`      | `~/.tmux.conf`                   | tmux config (Ctrl+a prefix, Claude Code compatibility)  |
 | `bin`       | `~/.local/bin/ghostty-window`   | Helper: open a window in the running Ghostty instance   |
+| `claude`    | `~/.claude/`                    | Claude Code statusline + ctx tap + attention hook       |
+| `launchagents` | `~/Library/LaunchAgents/`    | ctx-monitor LaunchAgent (opt-in; stowed, not auto-loaded) |
 
-`README`, `LICENSE`, `scripts/`, `index.sh`, `CLAUDE.md`, `.claude/`, and logs
-are excluded from stowing via `.stow-local-ignore`.
+`README`, `LICENSE`, `scripts/`, `index.sh`, `CLAUDE.md`, and logs are excluded
+from stowing via `.stow-local-ignore`. (Note: `.claude/` is **not** excluded — it
+is the `claude` package's mapping dir; ignoring it would stop that package linking
+into `~/.claude`.)
 
 > The `aerospace` and `bin` packages ship **configs** for
 > [AeroSpace](https://github.com/nikitabobko/AeroSpace) (tiling WM) and
@@ -79,25 +83,40 @@ ln -s "$PWD/agents-classic" ~/.local/bin/agents-classic
 mkdir -p ~/.claude/tools && ln -s "$PWD/ctx-monitor" ~/.claude/tools/ctx-monitor
 ```
 
-Optionally run ctx-monitor as an always-on LaunchAgent (the plist ships in this
-repo but is **not** stowed — copy it manually). It runs
-`/opt/homebrew/bin/python3` against `~/.claude/tools/ctx-monitor/ctx-monitor.py`,
-which resolves through the symlink created above:
+### Enable always-on ctx-monitor (opt-in)
+
+The `launchagents` stow package already symlinks the ctx-monitor LaunchAgent into
+`~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist` (done by `index.sh` / `stow`).
+But **stowing only places the plist — it does not load it.** The monitor stays off
+until you explicitly arm it, one time:
 
 ```sh
-cp launchd/sg.lexi.ctx-monitor.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
+launchctl load -w ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
+# modern alternative:
+# launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
 ```
 
-## Manual / not-in-repo
+With `RunAtLoad` + `KeepAlive` set, it then starts immediately and relaunches at
+every login. It runs `/opt/homebrew/bin/python3` against
+`~/.claude/tools/ctx-monitor/ctx-monitor.py`, so it **depends on the
+`agents-cockpit` clone existing** (the `~/.claude/tools/ctx-monitor` symlink
+created above must resolve). This is entirely opt-in — skip it if you don't want
+the monitor always running.
 
-A few pieces the cockpit relies on live under `~/.claude` (not in either repo):
+## Now shipped in the `claude` package (was manual)
 
-- **Statusline tap** — a block in `~/.claude/statusline.sh` that publishes
-  `/tmp/claude-ctx/<session_id>.json`, feeding both the cockpit's context %
-  column and ctx-monitor. Install instructions:
-  `agents-cockpit/ctx-monitor/README.md`.
-- **`/tag` command** — `~/.claude/commands/tag.md`, gives a session its
-  identity dot + name (`@cc_name` / `@cc_color`).
-- **Attention hook** — `~/.claude/hooks/tmux-attention.sh`, tints a pane when
+Two pieces the cockpit relies on under `~/.claude` are now version-controlled here
+and linked by the `claude` stow package:
+
+- **Statusline tap** — `~/.claude/statusline.sh` renders the Claude Code status
+  line and publishes `/tmp/claude-ctx/<session_id>.json`, feeding both the
+  cockpit's context-% column and ctx-monitor.
+- **Attention hook** — `~/.claude/hooks/tmux-attention.sh` tints a pane when
   Claude Code wants your attention (drives the cockpit's ❗ sort).
+
+## Still manual / not-in-repo
+
+- **`/tag` command** — the cockpit references a `/tag` slash command expected at
+  `~/.claude/commands/tag.md` (gives a session its identity dot + name via
+  `@cc_name` / `@cc_color`). It is **not present on this machine** and ships in
+  neither repo, so tagging may be unavailable until it is recreated.
