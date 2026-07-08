@@ -1,71 +1,103 @@
 # Dotfiles
 
-Personal dotfiles managed with GNU Stow for macOS development environment setup.
+Personal macOS dev-environment setup, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+One command (`./index.sh`) installs the tooling and symlinks the configs into
+your home directory. Companion repo [`agents-cockpit`](https://github.com/KiranM27/agents-cockpit)
+adds the Claude Code cockpit + ctx-monitor.
 
-## Quick Start
+## Prerequisites
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/KiranM27/dotfiles/tree/main dotfiles
-   cd dotfiles
-   ```
+- **macOS** (Apple Silicon assumed; the Homebrew PATH wiring targets `/opt/homebrew`).
+- **Xcode Command Line Tools** (provides `git`): `xcode-select --install`.
+- **Homebrew** — installed automatically by `index.sh` if missing.
 
-2. Run the setup script:
-   ```bash
-   chmod +x index.sh
-   ./index.sh
-   ```
+## Quick start
 
-   Or alternatively:
-   ```bash
-   bash index.sh
-   ```
+Clone to **`~/Desktop/lexi_code.nosync/dotfiles`** (recommended — Stow creates
+*relative* symlinks, so cloning here makes `~/.zshrc → Desktop/lexi_code.nosync/dotfiles/zsh/.zshrc`,
+matching the reference setup), then run the installer:
 
-## What Gets Installed
+```sh
+mkdir -p ~/Desktop/lexi_code.nosync
+git clone https://github.com/KiranM27/dotfiles.git ~/Desktop/lexi_code.nosync/dotfiles
+cd ~/Desktop/lexi_code.nosync/dotfiles
+./index.sh
+```
 
-### Homebrew Packages
-- tree - Directory tree display
-- zoxide - Smart directory navigation
-- stow - Symlink manager
-- fzf - Fuzzy finder
-- autojump - Directory jumping tool
+## What `index.sh` does
 
-### Zsh Environment
-- Oh My Zsh framework
-- Starship prompt
-- zsh-autosuggestions plugin
-- zsh-syntax-highlighting plugin
+Runs the scripts in `scripts/` in order:
 
-### Node.js Environment
-- nvm - Node Version Manager
-- bun - JavaScript runtime and package manager
+1. **`homebrew_check.sh`** — installs Homebrew if absent and wires it onto PATH
+   (`/opt/homebrew`) for Apple Silicon.
+2. **`brew_packages.sh`** — installs: `tree`, `zoxide`, `stow`, `fzf`, `autojump`.
+3. **`zsh_setup.sh`** — installs Oh My Zsh, Starship (via brew), and the
+   `zsh-autosuggestions` + `zsh-syntax-highlighting` plugins (git-cloned into
+   `$ZSH_CUSTOM/plugins`).
+4. **`nodejs_setup.sh`** — installs `nvm` (v0.39.7) and `bun`.
+5. **`stow_management.sh stow`** — symlinks the config packages into `$HOME`.
+   It **simulates first and prompts for confirmation** (`y/N`) before creating
+   any symlink.
 
-## Configuration Files
+### Stow packages
 
-- `.zshrc` - Zsh shell configuration with aliases and environment setup
-- `.aerospace.toml` - AeroSpace tiling WM config (keybindings, workspace routing, gaps)
-- `.tmux.conf` - tmux config (Ctrl+a prefix, splits, mouse, Claude Code compatibility)
-- `.gitignore` - Git ignore patterns
-- `.stow-local-ignore` - Files excluded from Stow symlinking
+| Package     | Links to                        | What it is                                              |
+|-------------|---------------------------------|---------------------------------------------------------|
+| `zsh`       | `~/.zshrc`                       | Zsh config (aliases, env, Oh My Zsh, Starship, plugins) |
+| `aerospace` | `~/.aerospace.toml`             | AeroSpace tiling-WM config (keybindings, workspaces)    |
+| `tmux`      | `~/.tmux.conf`                   | tmux config (Ctrl+a prefix, Claude Code compatibility)  |
+| `bin`       | `~/.local/bin/ghostty-window`   | Helper: open a window in the running Ghostty instance   |
 
-## Manual Setup Required
+`README`, `LICENSE`, `scripts/`, `index.sh`, `CLAUDE.md`, `.claude/`, and logs
+are excluded from stowing via `.stow-local-ignore`.
 
-Some tools need manual installation:
-- **pyenv** - Python version manager
-- **PostgreSQL** - Database (if needed)
-- **Docker Desktop** - Container platform
+> The `aerospace` and `bin` packages ship **configs** for
+> [AeroSpace](https://github.com/nikitabobko/AeroSpace) (tiling WM) and
+> [Ghostty](https://ghostty.org) (terminal). Install those two apps separately —
+> this repo does not.
 
-## How It Works
+Re-run any time: `./scripts/stow_management.sh status` (show links),
+`./scripts/stow_management.sh unstow` (remove them).
 
-The setup uses GNU Stow to create symlinks from the dotfiles directory to your home directory. The `index.sh` script:
+## Companion tooling: agent cockpit + ctx-monitor
 
-1. Makes all scripts executable
-2. Installs/checks Homebrew
-3. Installs required packages
-4. Sets up Zsh environment
-5. Installs Node.js tools
-6. Creates symlinks with Stow
+The [`agents-cockpit`](https://github.com/KiranM27/agents-cockpit) repo is a
+Textual/fzf cockpit over your Claude Code tmux sessions, and bundles
+**ctx-monitor** (unattended context checkpointing). The tmux config in *this*
+repo already wires in the cockpit's `client-attached` hook
+(`stamp-aerospace-wid.sh`), so set the cockpit up too:
 
-## Customization
+```sh
+# Clone anywhere (the `agents` launcher self-locates)
+git clone https://github.com/KiranM27/agents-cockpit
+cd agents-cockpit
 
-Edit the configuration files directly in this repository. Changes will be reflected in your home directory via symlinks.
+# Follow its README "Install (fresh machine)" section:
+/opt/homebrew/bin/python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+ln -s "$PWD/agents"         ~/.local/bin/agents
+ln -s "$PWD/agents-classic" ~/.local/bin/agents-classic
+mkdir -p ~/.claude/tools && ln -s "$PWD/ctx-monitor" ~/.claude/tools/ctx-monitor
+```
+
+Optionally run ctx-monitor as an always-on LaunchAgent (the plist ships in this
+repo but is **not** stowed — copy it manually). It runs
+`/opt/homebrew/bin/python3` against `~/.claude/tools/ctx-monitor/ctx-monitor.py`,
+which resolves through the symlink created above:
+
+```sh
+cp launchd/sg.lexi.ctx-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
+```
+
+## Manual / not-in-repo
+
+A few pieces the cockpit relies on live under `~/.claude` (not in either repo):
+
+- **Statusline tap** — a block in `~/.claude/statusline.sh` that publishes
+  `/tmp/claude-ctx/<session_id>.json`, feeding both the cockpit's context %
+  column and ctx-monitor. Install instructions:
+  `agents-cockpit/ctx-monitor/README.md`.
+- **`/tag` command** — `~/.claude/commands/tag.md`, gives a session its
+  identity dot + name (`@cc_name` / `@cc_color`).
+- **Attention hook** — `~/.claude/hooks/tmux-attention.sh`, tints a pane when
+  Claude Code wants your attention (drives the cockpit's ❗ sort).
