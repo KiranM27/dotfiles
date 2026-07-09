@@ -116,7 +116,9 @@ and linked by the `claude` stow package:
 
 ## Still manual / not-in-repo
 
-- **`/tag` command** — the cockpit references a `/tag` slash command expected at
-  `~/.claude/commands/tag.md` (gives a session its identity dot + name via
-  `@cc_name` / `@cc_color`). It is **not present on this machine** and ships in
-  neither repo, so tagging may be unavailable until it is recreated.
+- **`/tag` command (legacy — not needed)** — `/tag` (expected at
+  `~/.claude/commands/tag.md`) stamps `@cc_name`/`@cc_color` and is read **only
+  by `agents-classic`**, the old fzf picker. The current `agents` TUI derives
+  identity from the Claude session title (`/rename`) + `/color` instead, so its
+  absence doesn't affect the TUI. Recreate `tag.md` only if you still use
+  `agents-classic`.
