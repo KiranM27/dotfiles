@@ -38,6 +38,8 @@ Runs the scripts in `scripts/` in order:
 5. **`stow_management.sh stow`** — symlinks the config packages into `$HOME`.
    It **simulates first and prompts for confirmation** (`y/N`) before creating
    any symlink.
+6. **`load_launchagents.sh`** — registers the stowed LaunchAgents with `launchd`.
+   Stowing only *places* a plist; it does not load it. Safe to re-run.
 
 ### Stow packages
 
@@ -48,7 +50,7 @@ Runs the scripts in `scripts/` in order:
 | `tmux`      | `~/.tmux.conf`                   | tmux config (Ctrl+a prefix, Claude Code compatibility)  |
 | `bin`       | `~/.local/bin/ghostty-window`   | Helper: open a window in the running Ghostty instance   |
 | `claude`    | `~/.claude/`                    | Claude Code statusline + ctx tap + attention hook       |
-| `launchagents` | `~/Library/LaunchAgents/`    | ctx-monitor LaunchAgent (opt-in; stowed, not auto-loaded) |
+| `launchagents` | `~/Library/LaunchAgents/`    | ctx-monitor LaunchAgent (stowed *and* registered by `index.sh`) |
 
 `README`, `LICENSE`, `scripts/`, `index.sh`, `CLAUDE.md`, and logs are excluded
 from stowing via `.stow-local-ignore`. (Note: `.claude/` is **not** excluded — it
@@ -83,25 +85,55 @@ ln -s "$PWD/agents-classic" ~/.local/bin/agents-classic
 mkdir -p ~/.claude/tools && ln -s "$PWD/ctx-monitor" ~/.claude/tools/ctx-monitor
 ```
 
-### Enable always-on ctx-monitor (opt-in)
+### Enable always-on ctx-monitor
 
-The `launchagents` stow package already symlinks the ctx-monitor LaunchAgent into
-`~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist` (done by `index.sh` / `stow`).
-But **stowing only places the plist — it does not load it.** The monitor stays off
-until you explicitly arm it, one time:
+`index.sh` handles this end-to-end: `stow` symlinks the plist into
+`~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist`, then `load_launchagents.sh`
+registers it with `launchd`. **Stowing alone is not enough** — a plist sitting in
+`~/Library/LaunchAgents` that was never bootstrapped is invisible to launchd and
+will never start, at login or otherwise.
+
+The job runs `/opt/homebrew/bin/python3` against
+`~/.claude/tools/ctx-monitor/ctx-monitor.py`, so it **depends on the
+`agents-cockpit` clone existing**. On a fresh machine that symlink does not
+resolve until you do the cockpit setup above, so `load_launchagents.sh` detects
+this, warns, and skips rather than registering a crash-looping job. Once the
+cockpit is cloned, arm it:
 
 ```sh
-launchctl load -w ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
-# modern alternative:
-# launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/sg.lexi.ctx-monitor.plist
+./scripts/load_launchagents.sh
 ```
 
-With `RunAtLoad` + `KeepAlive` set, it then starts immediately and relaunches at
-every login. It runs `/opt/homebrew/bin/python3` against
-`~/.claude/tools/ctx-monitor/ctx-monitor.py`, so it **depends on the
-`agents-cockpit` clone existing** (the `~/.claude/tools/ctx-monitor` symlink
-created above must resolve). This is entirely opt-in — skip it if you don't want
-the monitor always running.
+With `RunAtLoad` + `KeepAlive` set, it starts immediately and relaunches at every
+login (and if it ever dies). Re-run the script any time — it boots out and
+re-bootstraps, which is also how you make launchd pick up an **edited** plist
+(launchd caches the old one otherwise).
+
+To turn it off:
+
+```sh
+launchctl bootout gui/$(id -u)/sg.lexi.ctx-monitor
+```
+
+#### Troubleshooting: "stowed but not registered" vs "registered but crashing"
+
+These fail identically from the outside (no monitor running) but need opposite
+fixes. `launchctl list` tells them apart:
+
+```sh
+launchctl list | grep ctx-monitor
+```
+
+- **No output** → launchd has never heard of the job. It is *stowed but not
+  registered*. Fix: `./scripts/load_launchagents.sh`. This is the trap — the
+  plist symlink exists and looks perfectly healthy, which is misleading.
+- **A PID and `0`** (e.g. `65823  0  sg.lexi.ctx-monitor`) → healthy and running.
+- **`-` instead of a PID, or a non-zero exit code** → *registered but crashing*.
+  launchd is trying and failing. Read the error log:
+  `cat ~/Library/Logs/ctx-monitor.err`. Usual cause is the
+  `~/.claude/tools/ctx-monitor` symlink not resolving.
+- Note `launchctl print-disabled gui/$(id -u)` reporting `enabled` proves
+  **nothing** about registration — that is only the disabled-override database.
 
 ## Now shipped in the `claude` package (was manual)
 

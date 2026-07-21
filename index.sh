@@ -37,5 +37,10 @@ echo
 # Setup symlinks using stow management
 echo "🔗 Setting up configuration symlinks..."
 ./scripts/stow_management.sh stow
+echo
+
+# Register stowed LaunchAgents with launchd (stowing alone does not load them)
+echo "🚀 Registering LaunchAgents..."
+./scripts/load_launchagents.sh
 
 echo "✅ Dotfiles setup complete!"

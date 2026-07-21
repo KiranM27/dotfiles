@@ -32,7 +32,12 @@
 	<key>StandardOutPath</key>
 	<string>/dev/null</string>
 
+	<!-- NOT /tmp/claude-ctx: launchd opens this file BEFORE exec'ing the job and
+	     does not create intermediate directories. ctx-monitor.py makes its own
+	     state dir, but that runs too late, and macOS reaps untouched /tmp files
+	     after ~3 days — so a missing /tmp/claude-ctx meant launchd could fail to
+	     spawn the job at login. ~/Library/Logs always exists and is never reaped. -->
 	<key>StandardErrorPath</key>
-	<string>/tmp/claude-ctx/monitor.err</string>
+	<string>/Users/kiran/Library/Logs/ctx-monitor.err</string>
 </dict>
 </plist>
